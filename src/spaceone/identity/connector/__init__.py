@@ -1,0 +1,1 @@
+from spaceone.identity.connector.kbfg_connector import KbfgConnector

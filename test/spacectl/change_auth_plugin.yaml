@@ -1,0 +1,5 @@
+plugin_info:
+  options:
+    auth_type: kbfg_sso
+  plugin_id: plugin-kbfg-sso
+  version: '1.0'
