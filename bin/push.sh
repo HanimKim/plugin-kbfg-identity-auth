@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # How to upload
-./build.sh
-docker push pyengine/plugin-kbfg-sso:1.0
-docker push spaceone/plugin-kbfg-sso:1.0
+DEFAULT=0.1
+VER=${1:-$DEFAULT}
+./build.sh ${VER}
+docker push pyengine/plugin-kbfg-identity-auth:${VER}
+#docker push spaceone/plugin-kbfg-sso:1.0
