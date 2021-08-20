@@ -8,7 +8,8 @@ Plugin for KBFG SSO Connector
 ~~~python
 options(dict) = {
 	'auth_type': 'kbfg_sso',
-	...
+	'agent_id': 'YOUR AGENT ID',
+	'auth_url': 'YOUR AUTH SERVER URL, ex http://1.1.1.1:8080'
 	}
 
 ~~~
@@ -21,7 +22,7 @@ use identity.Domain.change_auth_plugin API.
 
 
 ~~~bash
-spacectl exec change_auth_plugin identity.Domain -f keycloak.yaml
+spacectl exec change_auth_plugin identity.Domain -f change_auth_plugin.yaml
 ~~~
 
 Example YAML file
@@ -30,26 +31,34 @@ Example YAML file
 plugin_info:
   options:
     auth_type: kbfg_sso
-  plugin_id: plugin-kbfg-sso
+    agent_id: 123456
+    auth_url: http://1.1.1.1:8080
+  plugin_id: plugin-kbfg-identity-auth
   version: '1.0'
 ~~~
 
 # Auth.init
 
-If you init plugin, the response looks like
+If you init plugin, the response metadata looks like
 
 ~~~
-{'metadata': {
-              }
-	 }
+{'metadata':
+	{
+	'authorization_endpoint': 'http://1.1.1.1:8080/sso/sigin,
+	'token_endpoint': 'http://1.1.1.1:8080/sso/validateTicket'
+	}
+}
 ~~~
+
+***authrizat_endpoint*** is for ticket creation in a browser.
+***token_endpoint*** is for auth plugin.
 
 # Release Note
 
-## Version 1.0
+## Version 0.2
 
 Support New Auth API
 * Auth.init
 * Auth.verify
-* Auth.find
+* Auth.find (NOT SUPPORT)
 * Auth.login
