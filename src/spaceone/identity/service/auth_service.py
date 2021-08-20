@@ -24,6 +24,9 @@ from spaceone.identity.manager.auth_manager import AuthManager
 
 _LOGGER = logging.getLogger(__name__)
 
+AUTHORIZATION_POSTFIX = 'sso/signin'
+TOKEN_POSTFIX = 'sso/validateTicket'
+
 @authentication_handler
 class AuthService(BaseService):
     def __init__(self, metadata):
@@ -44,10 +47,8 @@ class AuthService(BaseService):
         """
         manager = self.locator.get_manager('AuthManager')
         options = params['options']
-        active = manager.verify(options)
-        options['auth_type'] = 'keycloak'
-        endpoints = manager.get_endpoint(options)
-        capability= endpoints
+        self._check_options(options)
+        capability = self._create_metadata(options['auth_url'])
         return {'metadata': capability}
 
     @transaction
@@ -129,3 +130,36 @@ class AuthService(BaseService):
         credentials = params['secret_data']
         user_credentials = params['user_credentials']
         return manager.login(options, credentials, user_credentials)
+
+    def _check_options(self, options):
+        """
+        Check options
+
+        required fields:
+            auth_type: kbfg_sso
+            agent_id: xxxxx
+            auth_url: http://1.1.1.11
+        """
+        auth_type = options.get('auth_type', "")
+        if auth_type != "kbfg_sso":
+            raise INVALID_PLUGIN_OPTIONS(options=auth_type)
+        agent_id = options.get('agent_id', None)
+        if agent_id == None:
+            raise INVALID_PLUGIN_OPTIONS(options="no agent_id")
+        auth_url = options.get('auth_url', None)
+        if auth_url == None:
+            raise INVALID_PLUGIN_OPTIONS(options="no auth_url")
+        return True
+
+    def _create_metadata(self, auth_url):
+        """
+        return
+            authorization_endpoint: auth_url/sso/signin
+            token_endpoint: auth_url/sso/validateTicket
+        """
+        endpoints = {
+            'authorization_endpoint': f'{auth_url}/{AUTHORIZATION_POSTFIX}',
+            'token_endpoint': f'{auth_url}/{TOKEN_POSTFIX}'
+        }
+        return endpoints
+

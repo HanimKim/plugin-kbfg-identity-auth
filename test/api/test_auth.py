@@ -14,15 +14,19 @@ CLIENT_ID = os.environ.get('CLIENT_ID','export CLIENT_ID=zzzzzzz')
 CLIENT_SECRET = os.environ.get('CLIENT_SECRET', 'export CLIENT_SECRET=aaaaaaaaa')
 
 AUTH_TYPE = 'kbfg_sso'
+AGENT_ID = '1234'
+AUTH_URL = 'http://10.1.1.1:9098'
 
 OPTIONS = {
-    'auth_type': AUTH_TYPE
+    'auth_type': AUTH_TYPE,
+    'agent_id': AGENT_ID,
+    'auth_url': AUTH_URL
 }
 
 
 class TestOAuth(TestCase):
 
-    #@unittest.skip('WRONG ACCESS_TOKEN')
+    @unittest.skip('WRONG ACCESS_TOKEN')
     def test_login(self):
         credentials = SECRET_DATA
         user_credentials = {
@@ -41,13 +45,15 @@ class TestOAuth(TestCase):
         print(j)
 
 
+    @unittest.skip('WRONG ACCESS_TOKEN')
     def test_verify(self):
         credentials = SECRET_DATA
         auth_v_info = self.identity.Auth.verify({'options':OPTIONS, 'secret_data': credentials, 'schema': SCHEMA})
         j = to_json(auth_v_info)
         print(j)
 
-   def test_find_user_id(self):
+    @unittest.skip('WRONG ACCESS_TOKEN')
+    def test_find_user_id(self):
        credentials = SECRET_DATA
        user_id = 'choonho.son@gmail.com'
        keyword = 'mz.co.kr'
@@ -56,6 +62,7 @@ class TestOAuth(TestCase):
        print(j)
        self.assertEqual(j['total_count'], 1)
 
+    @unittest.skip('WRONG ACCESS_TOKEN')
     def test_find_keyword(self):
         credentials = SECRET_DATA
         keyword = 'mz.co.kr'
@@ -65,6 +72,7 @@ class TestOAuth(TestCase):
         self.assertGreaterEqual(j['total_count'], 1)
 
 
+    @unittest.skip('WRONG ACCESS_TOKEN')
     def test_find_failure(self):
         """ not found users
         """
