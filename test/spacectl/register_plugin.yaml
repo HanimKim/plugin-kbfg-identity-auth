@@ -1,7 +1,7 @@
 ---
 name: KBFG SSO Auth Plugin
 service_type: identity.Domain
-image: pyengine/plugin-kbfg-sso
+image: pyengine/plugin-kbfg-identity-auth
 labels: ['Authentication', 'KBFG']
 template:
   options:
@@ -13,5 +13,5 @@ template:
 tags:
   icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/keycloak.svg
   description: KBFG SSO Authentication
-  spaceone:plugin_name: plugin-kbfg-sso
+  spaceone:plugin_name: plugin-kbfg-identity-auth
 
