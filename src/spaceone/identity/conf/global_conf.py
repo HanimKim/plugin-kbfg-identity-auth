@@ -1,11 +1,2 @@
 CONNECTORS = {
 }
-
-LOG = {
-}
-
-HANDLERS = {
-}
-
-ENDPOINTS = {
-}
