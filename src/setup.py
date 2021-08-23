@@ -23,8 +23,8 @@ with open('VERSION', 'r') as f:
 setup(
     name='plugin-keycloak-oidc',
     version=VERSION,
-    description='Keycloak OpenID Connector Plugin',
-    long_description='SpaceONE Identity Auth with Keycloak',
+    description='KBFG SSO Plugin',
+    long_description='SpaceONE Identity Auth with KBFG SSO',
     url='https://www.spaceone.dev/',
     author='MEGAZONE SpaceONE Team',
     author_email='admin@spaceone.dev',
