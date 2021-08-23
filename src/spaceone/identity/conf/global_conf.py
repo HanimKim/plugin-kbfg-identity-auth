@@ -1,2 +1,4 @@
 CONNECTORS = {
+    'KbfgConnector': {
+    }
 }
