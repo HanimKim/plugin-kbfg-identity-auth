@@ -21,7 +21,7 @@ with open('VERSION', 'r') as f:
     f.close()
 
 setup(
-    name='plugin-keycloak-oidc',
+    name='plugin-kbfg-identity-auth',
     version=VERSION,
     description='KBFG SSO Plugin',
     long_description='SpaceONE Identity Auth with KBFG SSO',
