@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 #   Copyright 2020 The SpaceONE Authors.
 #
@@ -14,31 +13,21 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-__all__ = ['UserInfo', 'UsersInfo', 'AuthVerifyInfo', 'PluginInfo']
-
 import functools
 from spaceone.api.identity.plugin import auth_pb2
 from spaceone.core.pygrpc.message_type import *
 
-def UserInfo(user_dict):
-    return auth_pb2.UserInfo(**user_dict)
+__all__ = ['UserInfo', 'UsersInfo', 'PluginInfo']
 
-def UsersInfo(users_list, total_count):
-    users = list(map(functools.partial(UserInfo), users_list))
-    return auth_pb2.UsersInfo(results=users, total_count=total_count)
+
+def UserInfo(user_data):
+    return auth_pb2.UserInfo(**user_data)
+
+
+def UsersInfo(users, total_count):
+    return auth_pb2.UsersInfo(results=list(map(functools.partial(UserInfo), users)), total_count=total_count)
+
 
 def PluginInfo(result):
     result['metadata'] = change_struct_type(result['metadata'])
     return auth_pb2.PluginInfo(**result)
-
-def AuthVerifyInfo(result):
-    """ result
-    {
-     'options': {
-        'a': 'b',
-        ...
-        'auth_type': 'google_oauth2'
-    }
-    """
-    result['options'] = change_struct_type(result['options'])
-    return auth_pb2.AuthVerifyInfo(**result)
