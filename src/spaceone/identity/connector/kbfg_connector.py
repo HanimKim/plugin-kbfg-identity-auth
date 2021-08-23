@@ -70,7 +70,11 @@ class KbfgConnector(BaseConnector):
         #     result['state'] = 'ENABLED'
         #     return result
         # raise ERROR_NOT_FOUND(key='user', value='<from access_token>')
-        pass
+        return {
+            "user_id": "test_user",
+            "name": "Test User",
+            "email": "test@gmail.com"
+        }
 
     def find(self, options, secret_data, schema, user_id, keyword):
         # e.g.) Find process
@@ -100,4 +104,4 @@ class KbfgConnector(BaseConnector):
         # except Exception as e:
         #     _LOGGER.debug(f'[find] {e}')
         #     raise ERROR_INVALID_FIND_REQUEST()
-        pass
+        return []
