@@ -32,7 +32,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         'spaceone-core',
-        'spaceone-api'
+        'spaceone-api',
+        'requests'
     ],
     zip_safe=False,
 )
