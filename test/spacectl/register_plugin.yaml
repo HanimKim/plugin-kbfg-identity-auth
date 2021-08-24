@@ -1,21 +1,17 @@
 ---
-name: Keycloak Identity Auth Plugin
+name: KBFG SSO Auth Plugin
 service_type: identity.Domain
-image: pyengine/plugin-keycloak-identity-auth
-labels: ['Authentication', 'Keycloak']
+image: pyengine/plugin-kbfg-identity-auth
+labels: ['Authentication', 'KBFG']
 template:
   options:
-  - key: openid-configuration
-    name: OpenID configuration URL
-    type: str
-    is_required: true
-    example: https://<sso domain>/auth/realms/<your domain>/.well-known/openid-configuration
   - key: auth_type
     name: Authentication Type
     type: str
     is_required: true
-    example: keycloak_oidc
+    example: kbfg_sso
 tags:
   icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/keycloak.svg
-  description: Keycloak OAuth Authentication
-  spaceone:plugin_name: plugin-keycloak-identity-auth
+  description: KBFG SSO Authentication
+  spaceone:plugin_name: plugin-kbfg-identity-auth
+
