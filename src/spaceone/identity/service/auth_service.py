@@ -45,7 +45,7 @@ class AuthService(BaseService):
         manager = self.locator.get_manager('AuthManager')
         options = params['options']
         active = manager.verify(options)
-        options['auth_type'] = 'keycloak'   # TODO. 이 부분만 kbfg_sso 로 세팅해주면 되는 것인가?
+        options['auth_type'] = 'keycloak'
         endpoints = manager.get_endpoint(options)
         capability= endpoints
         return {'metadata': capability}
@@ -100,8 +100,6 @@ class AuthService(BaseService):
         if user_id == None and keyword == None:
             raise ERROR_INVALID_FIND_REQUEST()
 
-        # TODO. '조회 기능이 없으면 사용자 정보를 unidentified 로 설정하여 리턴' 이라고 말씀해주셨는데,
-        #       그러면 user_infos = '' or null 이런식으로 세팅해주면 되는 것인가?
         user_infos = manager.find(options, secret_data, schema, user_id, keyword)
         _LOGGER.debug(f'[find] user_info: {user_infos}')
         if len(user_infos) == 0:
@@ -127,7 +125,7 @@ class AuthService(BaseService):
             ERROR_NOT_FOUND:
         """
         manager = self.locator.get_manager('AuthManager')
-        options = params['options']     # TODO. 이부분에 SSO 서버의 url 을 넣어주면 되는건가?
+        options = params['options']
         credentials = params['secret_data']
         user_credentials = params['user_credentials']
         return manager.login(options, credentials, user_credentials)
