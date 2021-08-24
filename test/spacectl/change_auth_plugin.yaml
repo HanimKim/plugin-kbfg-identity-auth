@@ -1,0 +1,7 @@
+plugin_info:
+  options:
+    auth_type: kbfg_sso
+    agent_id: agent-1234
+    auth_url: http://10.1.1.1:8080
+  plugin_id: plugin-kbfg-identity-auth
+  version: '0.2'
