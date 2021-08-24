@@ -1,11 +1,4 @@
 CONNECTORS = {
-}
-
-LOG = {
-}
-
-HANDLERS = {
-}
-
-ENDPOINTS = {
+    'KbfgConnector': {
+    }
 }

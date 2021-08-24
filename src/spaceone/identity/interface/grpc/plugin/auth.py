@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 #   Copyright 2020 The SpaceONE Authors.
 #
@@ -16,7 +15,7 @@
 
 from spaceone.api.identity.plugin import auth_pb2, auth_pb2_grpc
 from spaceone.core.pygrpc import BaseAPI
-from spaceone.core.pygrpc.message_type import *
+
 
 class Auth(BaseAPI, auth_pb2_grpc.AuthServicer):
 

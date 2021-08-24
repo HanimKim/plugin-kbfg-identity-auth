@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 #   Copyright 2020 The SpaceONE Authors.
 #
@@ -14,85 +13,35 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-__all__ = ['AuthManager']
-
 import logging
 
-from spaceone.core import config
-from spaceone.core.error import *
 from spaceone.core.manager import BaseManager
+from spaceone.identity.connector.kbfg_connector import KbfgConnector
 
-from spaceone.identity.error.custom import *
-
+__all__ = ['AuthManager']
 _LOGGER = logging.getLogger(__name__)
 
-DEFAULT_DOMAIN='gmail.com'
 
 class AuthManager(BaseManager):
-    def __init__(self, transaction):
-        super().__init__(transaction)
 
-    ###################
-    # Verify
-    ###################
-    def verify(self, options, secret_data=None, schema=None):
-        """ Check Google OAuth connection
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.kbfg_conn: KbfgConnector = self.locator.get_connector('KbfgConnector')
 
-        Args:
-            options:
-              - client_id
-            secret_data:
-              - secret_data
-              - schema
-            schema: oauth2_client_credentials
-        """
-        connector = self.locator.get_connector('KeycloakConnector')
-        r = connector.verify(options)
-        # ACTIVE/UNKNOWN
-        return r
+    def get_plugin_metadata(self):
+        return {
+            'metadata': {}
+        }
 
-    def login(self, options, credentials, user_credentials):
-        """ Get access_token from credentials
-        Args:
-            options(dict):
-              - domain: domain name of company (ex. gmail.com)
-            user_credentials(dict)
-              - access_token: google_oauth access_token for verifying
-        """
-        connector = self.locator.get_connector('KeycloakConnector')
-        user_info = connector.login(options, credentials, user_credentials)
-        return user_info
+    def verify(self, options, secret_data, schema):
+        self.kbfg_conn.verify(options, secret_data, schema)
+
+    def login(self, options, secret_data, schema, user_credentials):
+        user_data = self.kbfg_conn.login(options, secret_data, schema, user_credentials)
+        _LOGGER.debug(f'[login] {user_data}')
+        return user_data
 
     def find(self, options, secret_data, schema, user_id=None, keyword=None):
-        """ Find User information
-
-        GoogleOauth cannot find keyword search,
-        Please send user_id only.
-
-        Args:
-            options(dict):
-              - domain: domain name of company
-            user_id: user_id for exact matching (ex. example@gmail.com)
-            keyword: any string for partial match
-        Returns:
-            users_info
-        """
-        connector = self.locator.get_connector('KeycloakConnector')
-        user_infos = connector.find(options, secret_data, schema, user_id, keyword)
-        _LOGGER.debug(f'[find] {user_infos}')
-        return user_infos
-        #user_info = {
-        #    'user_id': my_user_id,
-        #    'email': my_user_id,
-        #    'state': 'ENABLED'
-        #}
-
-    def get_endpoint(self, options):
-        """
-        Discover endpoints
-        """
-        connector = self.locator.get_connector('KeycloakConnector')
-        endpoints = connector.get_endpoint(options)
-        return endpoints
-
-
+        users = self.kbfg_conn.find(options, secret_data, schema, user_id, keyword)
+        _LOGGER.debug(f'[find] {users}')
+        return users

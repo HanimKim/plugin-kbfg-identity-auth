@@ -13,27 +13,12 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+from spaceone.core.error import *
 
-from setuptools import setup, find_packages
 
-with open('VERSION', 'r') as f:
-    VERSION = f.read().strip()
-    f.close()
+class ERROR_PLUGIN_OPTIONS(ERROR_INVALID_ARGUMENT):
+    _message = 'Plugin options is invalid. (key = {key}, reason = {reason})'
 
-setup(
-    name='plugin-kbfg-identity-auth',
-    version=VERSION,
-    description='KBFG SSO Plugin',
-    long_description='SpaceONE Identity Auth with KBFG SSO',
-    url='https://www.spaceone.dev/',
-    author='MEGAZONE SpaceONE Team',
-    author_email='admin@spaceone.dev',
-    license='Apache License 2.0',
-    packages=find_packages(),
-    install_requires=[
-        'spaceone-core',
-        'spaceone-api',
-        'requests'
-    ],
-    zip_safe=False,
-)
+
+class ERROR_REQUIRED_FIND_OPTIONS(ERROR_INVALID_ARGUMENT):
+    _message = 'user_id or keyword is required to find a user.'
