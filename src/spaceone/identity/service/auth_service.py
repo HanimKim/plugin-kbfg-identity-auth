@@ -22,7 +22,6 @@ from spaceone.identity.manager.auth_manager import AuthManager
 
 _LOGGER = logging.getLogger(__name__)
 
-
 class AuthService(BaseService):
 
     def __init__(self, metadata):
@@ -46,7 +45,8 @@ class AuthService(BaseService):
         options = params['options']
 
         self._check_options(options)
-        return self.auth_mgr.get_plugin_metadata()
+
+        return self.auth_mgr.get_plugin_metadata(options)
 
     @transaction
     @check_required(['options', 'secret_data'])
@@ -112,6 +112,8 @@ class AuthService(BaseService):
                     'user_credentials': 'dict'
                 }
 
+        ex) { "options": {}, "secret_data": {}, "user_credentials": {"secureToken": "1234", "secureSessionId": "1111", "requestData": "id,name", "agentId": "2222", "clientIP": "1.1.1.1"}  }
+
         Returns:
             user_data (dict)
 
@@ -121,6 +123,8 @@ class AuthService(BaseService):
         secret_data = params['secret_data']
         schema = params.get('schema')
         user_credentials = params['user_credentials']
+
+        self._check_login_options(user_credentials)
 
         return self.auth_mgr.login(options, secret_data, schema, user_credentials)
 
@@ -138,3 +142,20 @@ class AuthService(BaseService):
     def _check_find_options(user_id, keyword):
         if user_id is None and keyword is None:
             raise ERROR_REQUIRED_FIND_OPTIONS()
+
+    @staticmethod
+    def _check_login_options(user_credentials: dict):
+        if user_credentials.get('secureToken') is None:
+            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.user_credentials.secureToken')
+
+        if user_credentials.get('secureSessionId') is None:
+            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.user_credentials.secureSessionId')
+        
+        if user_credentials.get('requestData') is None:
+            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.user_credentials.requestData')
+        
+        if user_credentials.get('agentId') is None:
+            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.user_credentials.agentId')
+        
+        if user_credentials.get('clientIP') is None:
+            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.user_credentials.clientIP')
