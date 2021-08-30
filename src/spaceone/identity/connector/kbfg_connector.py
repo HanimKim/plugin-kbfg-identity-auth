@@ -32,14 +32,6 @@ class KbfgConnector(BaseConnector):
     def __init__(self, transaction, config):
         super().__init__(transaction, config)
 
-    def get_plugin_metadata(self, options):
-        capability = {
-            'check_endpoint': KB_SSO_URL + CHECK_URL,
-            'authorization_endpoint': KB_SSO_URL + AUTHORIZATION_URL,
-            'token_endpoint': KB_SSO_URL + TOKEN_URL
-        }
-        return {'metadata': capability}
-
     def verify(self, options, secret_data, schema):
         pass
         # e.g.) This is connection check for Google Authorization Server
@@ -124,8 +116,6 @@ class KbfgConnector(BaseConnector):
             raise ERROR_NOT_FOUND(key='user', value='<from return user_info>')
         if 'name' in user_info:
             result['name'] = user_info['name']
-        else:
-            raise ERROR_NOT_FOUND(key='user', value='<from return user_info>')
 
         return result
 
@@ -138,8 +128,6 @@ class KbfgConnector(BaseConnector):
                 'state': 'UNIDENTIFIED'
             }
             result.append(user_info)
-        else:
-            raise ERROR_NOT_FOUND(key='find', value="not found user_id")
 
         return result
         # e.g.) Find process
@@ -174,12 +162,12 @@ class KbfgConnector(BaseConnector):
         """ Find endpoints
         authorization_endpoint
         token_endpoint
-        userinfo_endpoint
+        check_endpoint
         """
 
-        self.authorization_endpoint = KB_SSO_URL + AUTHORIZATION_URL
-        self.token_endpoint = KB_SSO_URL + TOKEN_URL
-        self.check_endpoint = KB_SSO_URL + CHECK_URL
+        self.authorization_endpoint = f'{KB_SSO_URL}{AUTHORIZATION_URL}'
+        self.token_endpoint = f'{KB_SSO_URL}{TOKEN_URL}'
+        self.check_endpoint = f'{KB_SSO_URL}{CHECK_URL}'
 
         # result = {}
         # try:

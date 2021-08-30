@@ -46,9 +46,7 @@ class AuthService(BaseService):
 
         self._check_options(options)
 
-        endpoints = self.auth_mgr.get_plugin_metadata(options)
-        capability = endpoints
-        return {'metadata': capability}
+        return self.auth_mgr.get_plugin_metadata(options)
 
     @transaction
     @check_required(['options', 'secret_data'])
