@@ -22,11 +22,23 @@ from spaceone.core.connector import BaseConnector
 __all__ = ["KbfgConnector"]
 _LOGGER = logging.getLogger(__name__)
 
+KB_SSO_URL = "http://kbpkiapc.kbstar.com:9080"  # 인증서버 주소
+CHECK_URL = "/api/v1/sso"                       # APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url
+AUTHORIZATION_URL = "/sso/signin"               # 통신체크 이후 agent_id로 인증해서 secureToken과 secureSessionId를 받아오는 인증 url
+TOKEN_URL = "/sso/validateTicket"               # 토큰이 옳바른 토큰인지 검증하고 uesr 정보를 리턴 해주는 검증 url
 
 class KbfgConnector(BaseConnector):
 
     def __init__(self, transaction, config):
         super().__init__(transaction, config)
+
+    def get_plugin_metadata(self, options):
+        capability = {
+            'check_endpoint': KB_SSO_URL + CHECK_URL,
+            'authorization_endpoint': KB_SSO_URL + AUTHORIZATION_URL,
+            'token_endpoint': KB_SSO_URL + TOKEN_URL
+        }
+        return {'metadata': capability}
 
     def verify(self, options, secret_data, schema):
         pass
@@ -57,13 +69,21 @@ class KbfgConnector(BaseConnector):
         request_data = user_credentials.get('requestData')  
         agent_id = user_credentials.get('agentId')
         client_ip = user_credentials.get('clientIP')
-        headers = {     # TODO. user_credentials안에 데이터를 헤더에 어떻게 담으면 되나!?
+        headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         }
+        # TODO. APC_SERVER 쪽 담당자에게 따로 데이터 보내는 규격이 있는지 문의해보기.
+        data = {
+            'secureToken': access_token,
+            'secureSessionId': secure_session_id,
+            'requestData': request_data,
+            'agentId': agent_id,
+            'clientIP': client_ip
+        }
 
         # Check token information
-        # r = requests.get(self.userinfo_endpoint, headers=headers)
+        # r = requests.post(self.userinfo_endpoint, headers=headers, data=data)
         r = {   # Mocking용 임시 데이터 
             "resultCode": "S200.000",
             "resultMessage": "SUCCESS",
@@ -98,18 +118,30 @@ class KbfgConnector(BaseConnector):
                 raise ERROR_NOT_FOUND(key='user', value='<from access_token>')
         
         result = {}
-        result['user_id'] = user_info['id']
-        result['name'] = user_info['name']
-        # result['email'] = ""
-        # result['mobile'] = ""     # TODO. 나머지 값들은 없어도 되는가?
-        # result['group'] = ""
-        result['state'] = "UNIDENTIFIED"
+        if 'id' in user_info:
+            result['user_id'] = user_info['id']
+        else:
+            raise ERROR_NOT_FOUND(key='user', value='<from return user_info>')
+        if 'name' in user_info:
+            result['name'] = user_info['name']
+        else:
+            raise ERROR_NOT_FOUND(key='user', value='<from return user_info>')
 
         return result
 
     def find(self, options, secret_data, schema, user_id, keyword):
 
-        return []
+        result = []
+        if user_id:
+            user_info = {
+                'user_id': user_id,
+                'state': 'UNIDENTIFIED'
+            }
+            result.append(user_info)
+        else:
+            raise ERROR_NOT_FOUND(key='find', value="not found user_id")
+
+        return result
         # e.g.) Find process
         # if secret_data == {}:
         #     # not support find
@@ -144,9 +176,10 @@ class KbfgConnector(BaseConnector):
         token_endpoint
         userinfo_endpoint
         """
-        # TODO. 여기 구조를 보면 처음 init() 에서 response값으로 주는 metadata 값을
-        #       그대로 화면에서 들고 있다가 다시 options 값에 넣어서 login()을 호출하는
-        #       것 같은데, 그 구조가 맞는 것인가!?
+
+        self.authorization_endpoint = KB_SSO_URL + AUTHORIZATION_URL
+        self.token_endpoint = KB_SSO_URL + TOKEN_URL
+        self.check_endpoint = KB_SSO_URL + CHECK_URL
 
         # result = {}
         # try:

@@ -22,10 +22,6 @@ from spaceone.identity.manager.auth_manager import AuthManager
 
 _LOGGER = logging.getLogger(__name__)
 
-CHECK_URL = "/api/v1/sso"           # APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url
-AUTHORIZATION_URL = "/sso/signin"   # 통신체크 이후 agent_id로 인증해서 secureToken과 secureSessionId를 받아오는 인증 url
-TOKEN_URL = "/sso/validateTicket"   # 토큰이 옳바른 토큰인지 검증하고 uesr 정보를 리턴 해주는 검증 url
-
 class AuthService(BaseService):
 
     def __init__(self, metadata):
@@ -50,14 +46,8 @@ class AuthService(BaseService):
 
         self._check_options(options)
 
-        # return self.auth_mgr.get_plugin_metadata()
-        # TODO. init에 샘플 소스에 check_server 하는거 처럼,
-        #       실제 server 통신과 agent_id을 체크를 하는 로직을 넣을지 말지 고민.
-        capability = {
-            'check_endpoint': options['auth_url'] + CHECK_URL,
-            'authorization_endpoint': options['auth_url'] + AUTHORIZATION_URL,
-            'token_endpoint': options['auth_url'] + TOKEN_URL
-        }
+        endpoints = self.auth_mgr.get_plugin_metadata(options)
+        capability = endpoints
         return {'metadata': capability}
 
     @transaction
