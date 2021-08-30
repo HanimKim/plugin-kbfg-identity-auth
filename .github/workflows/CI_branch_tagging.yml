@@ -67,7 +67,6 @@ jobs:
             then echo "::set-output name=not_first_tag::true"
             else echo "::set-output name=not_first_tag::false"
           fi
-
   update_master_branch_version_file:
     needs: condition_check
     runs-on: ubuntu-latest
