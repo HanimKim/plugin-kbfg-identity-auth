@@ -107,13 +107,13 @@ class KbfgConnector(BaseConnector):
                 # _LOGGER.debug("###################  key : %s" % key)
                 user_info[key] = user[key]
             else:
-                raise ERROR_NOT_FOUND(key='user', value='<from access_token>')
+                raise ERROR_NOT_FOUND(key='user', value='<from requestData or return user_info>')
         
         result = {}
         if 'id' in user_info:
             result['user_id'] = user_info['id']
         else:
-            raise ERROR_NOT_FOUND(key='user', value='<from return user_info>')
+            raise ERROR_NOT_FOUND(key='user', value='<from return user_info of user_id>')
         if 'name' in user_info:
             result['name'] = user_info['name']
 
