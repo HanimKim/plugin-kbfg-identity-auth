@@ -22,7 +22,7 @@ __all__ = ['AuthManager']
 _LOGGER = logging.getLogger(__name__)
 
 KB_SSO_URL = "http://kbpkiapc.kbstar.com:9080"  # 인증서버 주소
-CHECK_URL = "/api/v1/sso"                       # APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url
+CHECK_URL = "/api/v1/sso/checkserver"           # APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url
 AUTHORIZATION_URL = "/sso/signin"               # 통신체크 이후 agent_id로 인증해서 secureToken과 secureSessionId를 받아오는 인증 url
 TOKEN_URL = "/sso/validateTicket"               # 토큰이 옳바른 토큰인지 검증하고 uesr 정보를 리턴 해주는 검증 url
 

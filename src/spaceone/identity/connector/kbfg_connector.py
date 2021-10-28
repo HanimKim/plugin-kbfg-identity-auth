@@ -23,7 +23,7 @@ __all__ = ["KbfgConnector"]
 _LOGGER = logging.getLogger(__name__)
 
 KB_SSO_URL = "http://kbpkiapc.kbstar.com:9080"  # 인증서버 주소
-CHECK_URL = "/api/v1/sso"                       # APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url
+CHECK_URL = "/api/v1/sso/checkserver"           # APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url
 AUTHORIZATION_URL = "/sso/signin"               # 통신체크 이후 agent_id로 인증해서 secureToken과 secureSessionId를 받아오는 인증 url
 TOKEN_URL = "/sso/validateTicket"               # 토큰이 옳바른 토큰인지 검증하고 uesr 정보를 리턴 해주는 검증 url
 
@@ -75,16 +75,16 @@ class KbfgConnector(BaseConnector):
         }
 
         # Check token information
-        # r = requests.post(self.userinfo_endpoint, headers=headers, data=data)
-        r = {   # Mocking용 임시 데이터 
-            "resultCode": "S200.000",
-            "resultMessage": "SUCCESS",
-            "user": {
-                "id": "test1234",
-                "name": "tester"
-            },
-            "returnUrl": "https://1.1.1.1"
-        }
+        r = requests.post(self.authorization_endpoint, headers=headers, data=data)
+        # r = {   # Mocking용 임시 데이터 
+        #     "resultCode": "S200.000",
+        #     "resultMessage": "SUCCESS",
+        #     "user": {
+        #         "id": "test1234",
+        #         "name": "tester"
+        #     },
+        #     "returnUrl": "https://1.1.1.1"
+        # }
 
         # if r.resultCode != "S200.000":
         if r['resultCode'] != "S200.000":
@@ -93,8 +93,8 @@ class KbfgConnector(BaseConnector):
             raise ERROR_NOT_FOUND(key='userinfo', value=headers)
 
         # resultCode == S200.000
-        # r2 = r.json()
-        r2 = r
+        r2 = r.json()
+        # r2 = r    # Mocking용
         _LOGGER.debug(f'response: {r2}')
         user = r2['user']
         keyList = request_data.split(",")
@@ -107,13 +107,13 @@ class KbfgConnector(BaseConnector):
                 # _LOGGER.debug("###################  key : %s" % key)
                 user_info[key] = user[key]
             else:
-                raise ERROR_NOT_FOUND(key='user', value='<from access_token>')
+                raise ERROR_NOT_FOUND(key='user', value='<from requestData or return user_info>')
         
         result = {}
         if 'id' in user_info:
             result['user_id'] = user_info['id']
         else:
-            raise ERROR_NOT_FOUND(key='user', value='<from return user_info>')
+            raise ERROR_NOT_FOUND(key='user', value='<from return user_info of user_id>')
         if 'name' in user_info:
             result['name'] = user_info['name']
 
