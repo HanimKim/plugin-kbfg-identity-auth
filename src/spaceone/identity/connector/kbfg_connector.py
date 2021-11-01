@@ -22,11 +22,6 @@ from spaceone.core.connector import BaseConnector
 __all__ = ["KbfgConnector"]
 _LOGGER = logging.getLogger(__name__)
 
-# KB_SSO_URL = f'http://kbpkiapc.kbstar.com:9080'  # 인증서버 주소
-# CHECK_URL = f'/api/v1/sso/checkserver'           # APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url
-# AUTHORIZATION_URL = f'/sso/signin'               # 통신체크 이후 agent_id로 인증해서 secureToken과 secureSessionId를 받아오는 인증 url
-# TOKEN_URL = f'/sso/validateTicket'               # 토큰이 옳바른 토큰인지 검증하고 uesr 정보를 리턴 해주는 검증 url
-
 class KbfgConnector(BaseConnector):
 
     def __init__(self, transaction, config):
@@ -156,9 +151,9 @@ class KbfgConnector(BaseConnector):
     
     def get_endpoint(self, options):
         """ Find endpoints
-        authorization_endpoint
-        token_endpoint
-        check_endpoint
+        authorization_endpoint ( 통신체크 이후 agent_id로 인증해서 secureToken과 secureSessionId를 받아오는 인증 url )
+        validate_token_endpoint ( 토큰이 옳바른 토큰인지 검증하고 uesr 정보를 리턴 해주는 검증 url )
+        check_server_endpoint ( APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url )
         """
 
         result = {}
@@ -180,12 +175,6 @@ class KbfgConnector(BaseConnector):
         except Exception as e:
             _LOGGER.debug(f'[get_endpoint] INVALID_PLUGIN_OPTIONS')
             raise INVALID_PLUGIN_OPTIONS(options=options)
-            # self.authorization_endpoint = options['authorization_endpoint']
-            # self.token_endpoint = options['validate_token_endpoint']
-            # self.check_endpoint = options['check_server_endpoint']
-            # result['authorization_endpoint'] = options['authorization_endpoint']
-            # result['validate_token_endpoint'] = options['validate_token_endpoint']
-            # result['check_server_endpoint'] = options['check_server_endpoint']
 
         return result
 

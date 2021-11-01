@@ -31,14 +31,6 @@ class AuthManager(BaseManager):
         endpoints = self.kbfg_conn.get_endpoint(options)
         return {'metadata': endpoints}
 
-    # def get_plugin_metadata(self, options):
-    #     capability = {
-    #         'check_endpoint': f'{KB_SSO_URL}{CHECK_URL}',
-    #         'authorization_endpoint': f'{KB_SSO_URL}{AUTHORIZATION_URL}',
-    #         'token_endpoint': f'{KB_SSO_URL}{TOKEN_URL}'
-    #     }
-    #     return {'metadata': capability}
-
     def verify(self, options, secret_data, schema):
         self.kbfg_conn.verify(options, secret_data, schema)
 
