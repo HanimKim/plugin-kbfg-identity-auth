@@ -22,3 +22,6 @@ class ERROR_PLUGIN_OPTIONS(ERROR_INVALID_ARGUMENT):
 
 class ERROR_REQUIRED_FIND_OPTIONS(ERROR_INVALID_ARGUMENT):
     _message = 'user_id or keyword is required to find a user.'
+
+class ERROR_INVALID_CREDENTIALS(ERROR_AUTHENTICATE_FAILURE):
+    _message = 'Invalid credentials provided.'
