@@ -26,9 +26,9 @@ class AuthManager(BaseManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.kbfg_conn: KbfgConnector = self.locator.get_connector('KbfgConnector')
-    
-    def get_endpoint(self, options):
-        return self.kbfg_conn.get_endpoint(options)
+        
+    def get_plugin_metadata(self, options):
+        return {'metadata': {}}
 
     def verify(self, options, secret_data, schema):
         self.kbfg_conn.verify(options, secret_data, schema)

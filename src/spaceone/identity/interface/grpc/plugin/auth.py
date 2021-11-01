@@ -27,7 +27,7 @@ class Auth(BaseAPI, auth_pb2_grpc.AuthServicer):
 
         with self.locator.get_service('AuthService', metadata) as auth_svc:
             data = auth_svc.init(params)
-            return self.locator.get_info('EmptyInfo')
+            return self.locator.get_info('PluginInfo', data)
 
     def verify(self, request, context):
         params, metadata = self.parse_request(request, context)
