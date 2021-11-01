@@ -39,7 +39,9 @@ plugin_info:
 ~~~
 
 ***authrizat_endpoint*** is for ticket creation in a browser.
+
 ***validate_token_endpoint*** is for auth plugin.
+
 ***check_server_endpoint***is for check server
 
 # Release Note
