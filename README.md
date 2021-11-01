@@ -7,12 +7,11 @@ Plugin for KBFG SSO Connector
 
 ~~~python
 options(dict) = {
-	'auth_type': 'kbfg_sso',
-	'agent_id': 'YOUR AGENT ID',
-	'auth_endpoint': 'YOUR AUTH SERVER ENDPOINT, ex http://1.1.1.1:8080'
-	'...': '...'
-	}
-
+  'auth_type': 'kbfg_sso',
+  'agent_id': 'YOUR AGENT ID',
+  'auth_endpoint': 'YOUR AUTH SERVER ENDPOINT, ex http://1.1.1.1:8080'
+  '...': '...'
+}
 ~~~
 
 
