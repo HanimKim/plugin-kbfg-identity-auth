@@ -45,12 +45,12 @@ plugin_info:
 If you init plugin, the response metadata looks like
 
 ~~~
-{'metadata':
-	{
-	'authorization_endpoint': 'http://1.1.1.1:8080/sso/sigin,
-	'validate_token_endpoint': 'http://1.1.1.1:8080/sso/validateTicket',
-	'check_server_endpoint': 'http://1.1.1.1:8080/api/v1/sso/checkserver'
-	}
+{
+  'metadata': {
+    'authorization_endpoint': 'http://1.1.1.1:8080/sso/sigin,
+    'validate_token_endpoint': 'http://1.1.1.1:8080/sso/validateTicket',
+    'check_server_endpoint': 'http://1.1.1.1:8080/api/v1/sso/checkserver'
+  }
 }
 ~~~
 
