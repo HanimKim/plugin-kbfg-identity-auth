@@ -36,7 +36,6 @@ plugin_info:
     validate_token_endpoint: http://1.1.1.1:8080/sso/validateTicket
     check_server_endpoint: http://1.1.1.1:8080/api/v1/sso/checkserver
   plugin_id: plugin-kbfg-identity-auth
-  version: '1.0'
 ~~~
 
 # Auth.init
