@@ -46,7 +46,7 @@ class AuthService(BaseService):
 
         self._check_options(options)
 
-        return self.auth_mgr.get_plugin_metadata(options)
+        return self.auth_mgr.get_endpoint(options)
 
     @transaction
     @check_required(['options', 'secret_data'])
@@ -131,12 +131,12 @@ class AuthService(BaseService):
     @staticmethod
     def _check_options(options: dict):
         if options.get('auth_type') is None:
-            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.options.auth_type')
+            raise ERROR_REQUIRED_PARAMETER(reason=f'plugin_info.options.auth_type')
         elif options.get('auth_type') != 'kbfg_sso':
-            raise ERROR_PLUGIN_OPTIONS(reason='auth_type require kbfg_sso.')
+            raise ERROR_PLUGIN_OPTIONS(reason=f'auth_type require kbfg_sso.')
 
         if options.get('agent_id') is None:
-            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.options.agent_id')
+            raise ERROR_REQUIRED_PARAMETER(reason=f'plugin_info.options.agent_id')
 
     @staticmethod
     def _check_find_options(user_id, keyword):
@@ -146,16 +146,16 @@ class AuthService(BaseService):
     @staticmethod
     def _check_login_options(user_credentials: dict):
         if user_credentials.get('secureToken') is None:
-            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.user_credentials.secureToken')
+            raise ERROR_REQUIRED_PARAMETER(reason=f'plugin_info.user_credentials.secureToken')
 
         if user_credentials.get('secureSessionId') is None:
-            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.user_credentials.secureSessionId')
+            raise ERROR_REQUIRED_PARAMETER(reason=f'plugin_info.user_credentials.secureSessionId')
         
         if user_credentials.get('requestData') is None:
-            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.user_credentials.requestData')
+            raise ERROR_REQUIRED_PARAMETER(reason=f'plugin_info.user_credentials.requestData')
         
         if user_credentials.get('agentId') is None:
-            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.user_credentials.agentId')
+            raise ERROR_REQUIRED_PARAMETER(reason=f'plugin_info.user_credentials.agentId')
         
         if user_credentials.get('clientIP') is None:
-            raise ERROR_REQUIRED_PARAMETER(reason='plugin_info.user_credentials.clientIP')
+            raise ERROR_REQUIRED_PARAMETER(reason=f'plugin_info.user_credentials.clientIP')

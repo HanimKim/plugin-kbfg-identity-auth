@@ -22,10 +22,10 @@ from spaceone.core.connector import BaseConnector
 __all__ = ["KbfgConnector"]
 _LOGGER = logging.getLogger(__name__)
 
-KB_SSO_URL = "http://kbpkiapc.kbstar.com:9080"  # 인증서버 주소
-CHECK_URL = "/api/v1/sso/checkserver"           # APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url
-AUTHORIZATION_URL = "/sso/signin"               # 통신체크 이후 agent_id로 인증해서 secureToken과 secureSessionId를 받아오는 인증 url
-TOKEN_URL = "/sso/validateTicket"               # 토큰이 옳바른 토큰인지 검증하고 uesr 정보를 리턴 해주는 검증 url
+# KB_SSO_URL = f'http://kbpkiapc.kbstar.com:9080'  # 인증서버 주소
+# CHECK_URL = f'/api/v1/sso/checkserver'           # APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url
+# AUTHORIZATION_URL = f'/sso/signin'               # 통신체크 이후 agent_id로 인증해서 secureToken과 secureSessionId를 받아오는 인증 url
+# TOKEN_URL = f'/sso/validateTicket'               # 토큰이 옳바른 토큰인지 검증하고 uesr 정보를 리턴 해주는 검증 url
 
 class KbfgConnector(BaseConnector):
 
@@ -62,8 +62,8 @@ class KbfgConnector(BaseConnector):
         agent_id = user_credentials.get('agentId')
         client_ip = user_credentials.get('clientIP')
         headers = {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer {}'.format(access_token)
+            'Content-Type': f'application/json',
+            'Authorization': f'Bearer {access_token}'
         }
         # TODO. APC_SERVER 쪽 담당자에게 따로 데이터 보내는 규격이 있는지 문의해보기.
         data = {
@@ -75,7 +75,7 @@ class KbfgConnector(BaseConnector):
         }
 
         # Check token information
-        r = requests.post(self.authorization_endpoint, headers=headers, data=data)
+        r = requests.post(self.validate_token_endpoint, headers=headers, data=data)
         # r = {   # Mocking용 임시 데이터 
         #     "resultCode": "S200.000",
         #     "resultMessage": "SUCCESS",
@@ -86,34 +86,30 @@ class KbfgConnector(BaseConnector):
         #     "returnUrl": "https://1.1.1.1"
         # }
 
-        # if r.resultCode != "S200.000":
-        if r['resultCode'] != "S200.000":
-            _LOGGER.debug("KbfgConnector return code:%s" % r.resultCode)
-            _LOGGER.debug("KbfgConnector return object:%s" % r.json())
-            raise ERROR_NOT_FOUND(key='userinfo', value=headers)
+        if r.resultCode != "S200.000":
+        # if r['resultCode'] != "S200.000":
+            _LOGGER.debug(f'KbfgConnector return code : {r.resultCode}')
+            # _LOGGER.debug("KbfgConnector return object:%s" % r.json())
+            raise ERROR_NOT_FOUND(key=f'userinfo', value=f'<Connection to failed. resultCode : {r.resultCode}>')
 
         # resultCode == S200.000
         r2 = r.json()
         # r2 = r    # Mocking용
-        _LOGGER.debug(f'response: {r2}')
         user = r2['user']
-        keyList = request_data.split(",")
-        # _LOGGER.debug("KbfgConnector user list : %s" % user)
-        # _LOGGER.debug("KbfgConnector keyList : %s" % keyList)
+        key_list = request_data.split(",")
 
         user_info = {}
-        for key in keyList:
+        for key in key_list:
             if key in user:
-                # _LOGGER.debug("###################  key : %s" % key)
                 user_info[key] = user[key]
             else:
-                raise ERROR_NOT_FOUND(key='user', value='<from requestData or return user_info>')
+                raise ERROR_NOT_FOUND(key=f'user', value=f'<from requestData or return user_info>')
         
         result = {}
         if 'id' in user_info:
             result['user_id'] = user_info['id']
         else:
-            raise ERROR_NOT_FOUND(key='user', value='<from return user_info of user_id>')
+            raise ERROR_NOT_FOUND(key=f'user', value=f'<from return user_info of user_id>')
         if 'name' in user_info:
             result['name'] = user_info['name']
 
@@ -125,7 +121,7 @@ class KbfgConnector(BaseConnector):
         if user_id:
             user_info = {
                 'user_id': user_id,
-                'state': 'UNIDENTIFIED'
+                'state': f'UNIDENTIFIED'
             }
             result.append(user_info)
 
@@ -165,9 +161,33 @@ class KbfgConnector(BaseConnector):
         check_endpoint
         """
 
-        self.authorization_endpoint = f'{KB_SSO_URL}{AUTHORIZATION_URL}'
-        self.token_endpoint = f'{KB_SSO_URL}{TOKEN_URL}'
-        self.check_endpoint = f'{KB_SSO_URL}{CHECK_URL}'
+        result = {}
+        # options(패러미터)에 endpoint 값들이 있는 경우.
+        try:
+            if 'metadata' in options:
+                self.authorization_endpoint = options['metadata']['authorization_endpoint']
+                self.validate_token_endpoint = options['metadata']['validate_token_endpoint']
+                self.check_server_endpoint = options['metadata']['check_server_endpoint']
+            else:
+                self.authorization_endpoint = options['authorization_endpoint']
+                self.validate_token_endpoint = options['validate_token_endpoint']
+                self.check_server_endpoint = options['check_server_endpoint']
+                result['authorization_endpoint'] = options['authorization_endpoint']
+                result['validate_token_endpoint'] = options['validate_token_endpoint']
+                result['check_server_endpoint'] = options['check_server_endpoint']
+
+        # 없는 경우.
+        except Exception as e:
+            _LOGGER.debug(f'[get_endpoint] INVALID_PLUGIN_OPTIONS')
+            raise INVALID_PLUGIN_OPTIONS(options=options)
+            # self.authorization_endpoint = options['authorization_endpoint']
+            # self.token_endpoint = options['validate_token_endpoint']
+            # self.check_endpoint = options['check_server_endpoint']
+            # result['authorization_endpoint'] = options['authorization_endpoint']
+            # result['validate_token_endpoint'] = options['validate_token_endpoint']
+            # result['check_server_endpoint'] = options['check_server_endpoint']
+
+        return result
 
         # result = {}
         # try:

@@ -9,7 +9,8 @@ Plugin for KBFG SSO Connector
 options(dict) = {
 	'auth_type': 'kbfg_sso',
 	'agent_id': 'YOUR AGENT ID',
-	'auth_url': 'YOUR AUTH SERVER URL, ex http://1.1.1.1:8080'
+	'auth_endpoint': 'YOUR AUTH SERVER ENDPOINT, ex http://1.1.1.1:8080'
+	'...': '...'
 	}
 
 ~~~
@@ -32,7 +33,9 @@ plugin_info:
   options:
     auth_type: kbfg_sso
     agent_id: 123456
-    auth_url: http://1.1.1.1:8080
+    authorization_endpoint: http://1.1.1.1:8080/sso/sigin
+	validate_token_endpoint: http://1.1.1.1:8080/sso/validateTicket
+	check_server_endpoint: http://1.1.1.1:8080/api/v1/sso/checkserver
   plugin_id: plugin-kbfg-identity-auth
   version: '1.0'
 ~~~
@@ -45,13 +48,15 @@ If you init plugin, the response metadata looks like
 {'metadata':
 	{
 	'authorization_endpoint': 'http://1.1.1.1:8080/sso/sigin,
-	'token_endpoint': 'http://1.1.1.1:8080/sso/validateTicket'
+	'validate_token_endpoint': 'http://1.1.1.1:8080/sso/validateTicket',
+	'check_server_endpoint': 'http://1.1.1.1:8080/api/v1/sso/checkserver'
 	}
 }
 ~~~
 
 ***authrizat_endpoint*** is for ticket creation in a browser.
-***token_endpoint*** is for auth plugin.
+***validate_token_endpoint*** is for auth plugin.
+***check_server_endpoint***is for check server
 
 # Release Note
 
