@@ -34,8 +34,8 @@ plugin_info:
     auth_type: kbfg_sso
     agent_id: 123456
     authorization_endpoint: http://1.1.1.1:8080/sso/sigin
-	validate_token_endpoint: http://1.1.1.1:8080/sso/validateTicket
-	check_server_endpoint: http://1.1.1.1:8080/api/v1/sso/checkserver
+    validate_token_endpoint: http://1.1.1.1:8080/sso/validateTicket
+    check_server_endpoint: http://1.1.1.1:8080/api/v1/sso/checkserver
   plugin_id: plugin-kbfg-identity-auth
   version: '1.0'
 ~~~
