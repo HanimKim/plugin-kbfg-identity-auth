@@ -28,8 +28,7 @@ class AuthManager(BaseManager):
         self.kbfg_conn: KbfgConnector = self.locator.get_connector('KbfgConnector')
     
     def get_endpoint(self, options):
-        endpoints = self.kbfg_conn.get_endpoint(options)
-        return {'metadata': endpoints}
+        return self.kbfg_conn.get_endpoint(options)
 
     def verify(self, options, secret_data, schema):
         self.kbfg_conn.verify(options, secret_data, schema)

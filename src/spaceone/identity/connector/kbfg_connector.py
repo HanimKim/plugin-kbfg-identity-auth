@@ -57,7 +57,7 @@ class KbfgConnector(BaseConnector):
         agent_id = user_credentials.get('agentId')
         client_ip = user_credentials.get('clientIP')
         headers = {
-            'Content-Type': f'application/json',
+            'Content-Type': 'application/json',
             'Authorization': f'Bearer {access_token}'
         }
         # TODO. APC_SERVER 쪽 담당자에게 따로 데이터 보내는 규격이 있는지 문의해보기.
@@ -81,15 +81,17 @@ class KbfgConnector(BaseConnector):
         #     "returnUrl": "https://1.1.1.1"
         # }
 
-        if r.resultCode != "S200.000":
-        # if r['resultCode'] != "S200.000":
-            _LOGGER.debug(f'KbfgConnector return code : {r.resultCode}')
-            # _LOGGER.debug("KbfgConnector return object:%s" % r.json())
-            raise ERROR_NOT_FOUND(key=f'userinfo', value=f'<Connection to failed. resultCode : {r.resultCode}>')
-
+        if r.status_code != 200:
+            _LOGGER.debug(f'KbfgConnector return code : {r.status_code}')
+            raise ERROR_INVALID_CREDENTIALS()
+        
         # resultCode == S200.000
         r2 = r.json()
-        # r2 = r    # Mocking용
+
+        if r2.resultCode != "S200.000":
+            _LOGGER.debug(f'KbfgConnector return code : {r2.resultCode}')
+            raise ERROR_INVALID_CREDENTIALS()
+
         user = r2['user']
         key_list = request_data.split(",")
 
@@ -98,13 +100,13 @@ class KbfgConnector(BaseConnector):
             if key in user:
                 user_info[key] = user[key]
             else:
-                raise ERROR_NOT_FOUND(key=f'user', value=f'<from requestData or return user_info>')
+                raise ERROR_INVALID_CREDENTIALS()
         
         result = {}
         if 'id' in user_info:
             result['user_id'] = user_info['id']
         else:
-            raise ERROR_NOT_FOUND(key=f'user', value=f'<from return user_info of user_id>')
+            raise ERROR_INVALID_CREDENTIALS()
         if 'name' in user_info:
             result['name'] = user_info['name']
 
@@ -116,7 +118,7 @@ class KbfgConnector(BaseConnector):
         if user_id:
             user_info = {
                 'user_id': user_id,
-                'state': f'UNIDENTIFIED'
+                'state': 'UNIDENTIFIED'
             }
             result.append(user_info)
 
@@ -156,27 +158,26 @@ class KbfgConnector(BaseConnector):
         check_server_endpoint ( APC(SSO) SERVER 와 통신이 잘 되는지 통신체크 하는 url )
         """
 
-        result = {}
         # options(패러미터)에 endpoint 값들이 있는 경우.
         try:
-            if 'metadata' in options:
-                self.authorization_endpoint = options['metadata']['authorization_endpoint']
-                self.validate_token_endpoint = options['metadata']['validate_token_endpoint']
-                self.check_server_endpoint = options['metadata']['check_server_endpoint']
-            else:
-                self.authorization_endpoint = options['authorization_endpoint']
-                self.validate_token_endpoint = options['validate_token_endpoint']
-                self.check_server_endpoint = options['check_server_endpoint']
-                result['authorization_endpoint'] = options['authorization_endpoint']
-                result['validate_token_endpoint'] = options['validate_token_endpoint']
-                result['check_server_endpoint'] = options['check_server_endpoint']
+            self.authorization_endpoint = options['authorization_endpoint']
+            self.validate_token_endpoint = options['validate_token_endpoint']
+            self.check_server_endpoint = options['check_server_endpoint']
+            # if 'metadata' in options:
+            #     self.authorization_endpoint = options['metadata']['authorization_endpoint']
+            #     self.validate_token_endpoint = options['metadata']['validate_token_endpoint']
+            #     self.check_server_endpoint = options['metadata']['check_server_endpoint']
+            # else:
+            #     self.authorization_endpoint = options['authorization_endpoint']
+            #     self.validate_token_endpoint = options['validate_token_endpoint']
+            #     self.check_server_endpoint = options['check_server_endpoint']
 
         # 없는 경우.
         except Exception as e:
             _LOGGER.debug(f'[get_endpoint] INVALID_PLUGIN_OPTIONS')
             raise INVALID_PLUGIN_OPTIONS(options=options)
 
-        return result
+        return {}
 
         # result = {}
         # try:
