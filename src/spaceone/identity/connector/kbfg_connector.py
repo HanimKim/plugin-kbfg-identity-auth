@@ -88,8 +88,8 @@ class KbfgConnector(BaseConnector):
         # resultCode == S200.000
         r2 = r.json()
 
-        if r2.resultCode != "S200.000":
-            _LOGGER.debug(f'KbfgConnector return code : {r2.resultCode}')
+        if r2['resultCode'] != 'S200.000':
+            _LOGGER.debug(f'KbfgConnector return code : {r2["resultCode"]}')
             raise ERROR_INVALID_CREDENTIALS()
 
         user = r2['user']
