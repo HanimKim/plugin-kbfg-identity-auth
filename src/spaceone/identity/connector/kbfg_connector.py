@@ -83,6 +83,7 @@ class KbfgConnector(BaseConnector):
 
         if r.status_code != 200:
             _LOGGER.debug(f'KbfgConnector return code : {r.status_code}')
+            _LOGGER.debug(f'KbfgConnector return data : {r.json()}')
             raise ERROR_INVALID_CREDENTIALS()
         
         # resultCode == S200.000
