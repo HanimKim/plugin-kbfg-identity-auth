@@ -56,10 +56,7 @@ class KbfgConnector(BaseConnector):
         request_data = user_credentials.get('requestData')  
         agent_id = user_credentials.get('agentId')
         client_ip = user_credentials.get('clientIP')
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {access_token}'
-        }
+
         # TODO. APC_SERVER 쪽 담당자에게 따로 데이터 보내는 규격이 있는지 문의해보기.
         data = {
             'secureToken': access_token,
@@ -70,7 +67,7 @@ class KbfgConnector(BaseConnector):
         }
 
         # Check token information
-        r = requests.post(self.validate_token_endpoint, headers=headers, data=data)
+        r = requests.post(self.validate_token_endpoint, data=data, verify=False)
         # r = {   # Mocking용 임시 데이터 
         #     "resultCode": "S200.000",
         #     "resultMessage": "SUCCESS",
